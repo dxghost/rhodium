@@ -1,0 +1,2 @@
+rootProject.name='Rhodium'
+include ':app'
