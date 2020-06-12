@@ -2,6 +2,7 @@ package com.duo.rhodium
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -28,6 +29,13 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     Toast.makeText(this, "PHONE_ACCESS_GRANTED", Toast.LENGTH_LONG).show()
                     CallAccessBtn.setBackgroundColor(0)
+                    if (ActivityCompat.checkSelfPermission(
+                            this,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        ) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        startActivity(Intent(this, ItemListActivity::class.java))
+                    }
                 } else {
                     Toast.makeText(this, "PHONE_ACCESS_DENIED", Toast.LENGTH_LONG).show()
                 }
@@ -39,6 +47,13 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     Toast.makeText(this, "GPS_ACCESS_GRANTED", Toast.LENGTH_LONG).show()
                     MapAccessBtn.setBackgroundColor(0)
+                    if (ActivityCompat.checkSelfPermission(
+                            this,
+                            Manifest.permission.READ_PHONE_STATE
+                        ) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        startActivity(Intent(this, ItemListActivity::class.java))
+                    }
                 } else {
                     Toast.makeText(this, "GPS_ACCESS_DENIED", Toast.LENGTH_LONG).show()
                 }
@@ -66,6 +81,17 @@ class MainActivity : AppCompatActivity() {
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             CallAccessBtn.setBackgroundColor(0)
+        }
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_PHONE_STATE
+            ) == PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            startActivity(Intent(this, ItemListActivity::class.java))
         }
 
         MapAccessBtn.setOnClickListener {
@@ -98,6 +124,7 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "CALL_ACCESS_ALREADY_ACQUIRED", Toast.LENGTH_SHORT).show()
             }
         }
+
     }
 
 

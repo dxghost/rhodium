@@ -34,6 +34,7 @@
         android:layout_width="260dp"
         android:layout_height="106dp"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -59,19 +60,5 @@
             app:srcCompat="@android:drawable/stat_sys_phone_call" />
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/procceedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#C84658"
-        android:text="Procceed"
-        android:textColor="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:layout_constraintVertical_bias="0.364" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
