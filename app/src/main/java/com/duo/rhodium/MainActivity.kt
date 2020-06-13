@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity() {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            startActivity(Intent(this, ItemListActivity::class.java))
+            startActivity(Intent(this, DatasActivity::class.java))
         }
 
         MapAccessBtn.setOnClickListener {
