@@ -1,17 +1,13 @@
 package com.duo.rhodium
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.telephony.TelephonyManager
-import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlin.system.exitProcess
 
 
 val PHONE_CODE = 101
@@ -34,7 +30,7 @@ class MainActivity : AppCompatActivity() {
                             Manifest.permission.ACCESS_COARSE_LOCATION
                         ) == PackageManager.PERMISSION_GRANTED
                     ) {
-                        startActivity(Intent(this, ItemListActivity::class.java))
+                        startActivity(Intent(this, DatasActivity::class.java))
                     }
                 } else {
                     Toast.makeText(this, "PHONE_ACCESS_DENIED", Toast.LENGTH_LONG).show()
@@ -52,7 +48,7 @@ class MainActivity : AppCompatActivity() {
                             Manifest.permission.READ_PHONE_STATE
                         ) == PackageManager.PERMISSION_GRANTED
                     ) {
-                        startActivity(Intent(this, ItemListActivity::class.java))
+                        startActivity(Intent(this, DatasActivity::class.java))
                     }
                 } else {
                     Toast.makeText(this, "GPS_ACCESS_DENIED", Toast.LENGTH_LONG).show()
