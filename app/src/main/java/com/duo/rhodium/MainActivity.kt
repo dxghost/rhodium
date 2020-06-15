@@ -14,6 +14,7 @@ val PHONE_CODE = 101
 val GPS_CODE = 102
 
 class MainActivity : AppCompatActivity() {
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>, grantResults: IntArray

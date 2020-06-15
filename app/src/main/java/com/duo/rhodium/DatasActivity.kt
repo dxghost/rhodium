@@ -35,11 +35,14 @@ val techTypes = arrayListOf(
 )
 
 class DatasActivity : AppCompatActivity() {
+    var dbHandler: DatabaseHandler? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_datas)
+        dbHandler = DatabaseHandler(this)
+
         val tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
         plmnValue.text = tm.networkOperator
         var netWorkType = techTypes[tm.networkType]
@@ -90,8 +93,16 @@ class DatasActivity : AppCompatActivity() {
             else ->
                 currentCell = allCellInfo[0]
         }
-        cellInfoValue.text = getCellInfo(currentCell).toString()
 
+//        TODO Uncomment these to see behaviour
+//        var f= Milestone()
+//        f.location = "location"
+//        f.technology = "3g"
+//        dbHandler!!.createMilestone(f)
+//        var arr = dbHandler!!.readMilestones()
+//        cellInfoValue.text = arr.toString()
+
+        cellInfoValue.text = getCellInfo(currentCell).toString()
     }
 }
 
