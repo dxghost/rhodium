@@ -1,4 +1,4 @@
-package com.duo.rhodium
+package com.example.rhodium
 
 import org.junit.Test
 
