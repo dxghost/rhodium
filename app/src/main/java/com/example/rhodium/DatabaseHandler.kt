@@ -111,7 +111,6 @@ class DatabaseHandler(context: Context) :
     }
 
     fun readMilestoneByLocation(location: String): Milestone{
-        println(location)
         var db: SQLiteDatabase = writableDatabase
         var cursor: Cursor = db.query(
             TABLE_NAME, arrayOf(
@@ -158,8 +157,6 @@ class DatabaseHandler(context: Context) :
         milestone.tac = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_TAC))
         milestone.plmn = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_PLMN))
         milestone.cellID = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_CELL_ID))
-
-        println(milestone.toString())
 
         return milestone
     }

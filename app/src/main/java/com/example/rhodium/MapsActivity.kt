@@ -31,7 +31,7 @@ import kotlinx.android.synthetic.main.popup.view.*
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     var dbHandler: DatabaseHandler? = null
-
+    var id = 0
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
 
@@ -57,6 +57,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
         getCallPermission()
+        dbHandler = DatabaseHandler(this)
 
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -198,22 +199,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         f.location = currentLatLng.toString()
         f.technology = "3g"
-        f.signalStrength = "123"
-        f.lac = "1234"
-        f.rxLev = "1234"
-        f.tac = "1234"
-        f.rac = "1234"
-        f.plmn = "1234"
-        f.c1 = "1234"
-        f.c2 = "1234"
-        f.rscp = "123"
-        f.rsrp = "1234"
-        f.rsrq = "1234"
-        f.ecno = "1234"
-        f.id = 1234
-        f.cellID = "1234"
-        f.rxLev = "1234"
-        dbHandler?.createMilestone(f)
+        f.signalStrength = currentLatLng.latitude.toString()
+        f.lac = currentLatLng.longitude.toString()
+        f.rxLev = currentLatLng.longitude.toString()
+        f.tac = currentLatLng.latitude.toString()
+        f.rac = currentLatLng.longitude.toString()
+        f.plmn = currentLatLng.latitude.toString()
+        f.c1 = currentLatLng.longitude.toString()
+        f.c2 = currentLatLng.latitude.toString()
+        f.rscp = currentLatLng.longitude.toString()
+        f.rsrp = currentLatLng.latitude.toString()
+        f.rsrq = currentLatLng.longitude.toString()
+        f.ecno = currentLatLng.latitude.toString()
+        f.cellID = currentLatLng.longitude.toString()
+        f.rxLev = currentLatLng.latitude.toString()
+        dbHandler!!.createMilestone(f)
     }
 
     private fun getLocationPermission() {
@@ -371,10 +371,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     // will display a popup
     // just fetch record corresponding with location and then display it
     private fun showDialog(location: LatLng) {
+        var cellInfo  = dbHandler!!.readMilestoneByLocation(location.toString())
 
-//        dbHandler = DatabaseHandler(this)
-//        var arr = dbHandler!!.readMilestoneByLocation(location.toString())
-        var arr = Milestone()
 
         val mDialogView = LayoutInflater.from(this).inflate(R.layout.popup, null)
         val mBuilder = AlertDialog.Builder(this)
@@ -383,21 +381,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val mAlertDialog = mBuilder.show()
         mDialogView.location.setText(location.latitude.toString() + "," + location.longitude.toString())
 
-        mDialogView.plmnId.setText("1234")
-        mDialogView.technology.setText("1234")
-        mDialogView.racId.setText("1234")
-        mDialogView.lacId.setText("1234")
-        mDialogView.tacId.setText("1234")
-        mDialogView.rxLev.setText("1234")
-        mDialogView.lacId.setText("1234")
-        mDialogView.c1.setText("1234")
-        mDialogView.c2.setText("1234")
-        mDialogView.rscp.setText("1234")
-        mDialogView.rsrp.setText("1234")
-        mDialogView.rsrq.setText("1234")
-        mDialogView.ecno.setText("1234")
-        mDialogView.cellId.setText("1234")
-        mDialogView.cellId.setText("Low")
+        mDialogView.plmnId.setText(cellInfo.plmn)
+        mDialogView.technology.setText(cellInfo.technology)
+        mDialogView.racId.setText(cellInfo.rac)
+        mDialogView.lacId.setText(cellInfo.lac)
+        mDialogView.tacId.setText(cellInfo.tac)
+        mDialogView.rxLev.setText(cellInfo.rxLev)
+        mDialogView.c1.setText(cellInfo.c1)
+        mDialogView.c2.setText(cellInfo.c2)
+        mDialogView.rscp.setText(cellInfo.rscp)
+        mDialogView.rsrp.setText(cellInfo.rsrp)
+        mDialogView.rsrq.setText(cellInfo.rsrq)
+        mDialogView.ecno.setText(cellInfo.ecno)
+        mDialogView.cellId.setText(cellInfo.cellID)
+        mDialogView.signalStrength.setText(cellInfo.signalStrength)
 
         mDialogView.close_btn.setOnClickListener {
             mAlertDialog.dismiss()
