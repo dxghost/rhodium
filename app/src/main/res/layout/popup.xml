@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="10dp">
 
     <TableLayout
@@ -26,7 +26,7 @@
                 android:id="@+id/plmnId"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimaryDark"/>
+                android:textColor="@color/colorPrimaryDark" />
 
             <TextView
                 android:id="@+id/technologyLabel"
@@ -38,7 +38,7 @@
                 android:id="@+id/technology"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimaryDark"/>
+                android:textColor="@color/colorPrimaryDark" />
         </TableRow>
 
         <TableRow
@@ -56,7 +56,7 @@
                 android:id="@+id/racId"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimaryDark"/>
+                android:textColor="@color/colorPrimaryDark" />
 
             <TextView
                 android:id="@+id/lacIdLabel"
@@ -68,7 +68,7 @@
                 android:id="@+id/lacId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimaryDark"/>
+                android:textColor="@color/colorPrimaryDark" />
         </TableRow>
 
         <TableRow
@@ -86,7 +86,7 @@
                 android:id="@+id/tacId"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimaryDark"/>
+                android:textColor="@color/colorPrimaryDark" />
 
             <TextView
                 android:id="@+id/rxLevLabel"
@@ -98,7 +98,7 @@
                 android:id="@+id/rxLev"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimaryDark"/>
+                android:textColor="@color/colorPrimaryDark" />
         </TableRow>
 
         <TableRow
@@ -116,7 +116,7 @@
                 android:id="@+id/c1"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimaryDark"/>
+                android:textColor="@color/colorPrimaryDark" />
 
             <TextView
                 android:id="@+id/c2Label"
@@ -128,10 +128,101 @@
                 android:id="@+id/c2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimaryDark"/>
+                android:textColor="@color/colorPrimaryDark" />
 
         </TableRow>
 
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/signalStrengthLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Strength : " />
+
+            <TextView
+                android:id="@+id/signalStrength"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryDark" />
+
+            <TextView
+                android:id="@+id/cellIdLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Cell ID : " />
+
+            <TextView
+                android:id="@+id/cellId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryDark" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/rscpLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RSCP: " />
+
+            <TextView
+                android:id="@+id/rscp"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryDark" />
+
+            <TextView
+                android:id="@+id/rsrpLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="RSRP : " />
+
+            <TextView
+                android:id="@+id/rsrp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryDark" />
+
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/rsrqLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RSRQ: " />
+
+            <TextView
+                android:id="@+id/rsrq"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryDark" />
+
+            <TextView
+                android:id="@+id/ecnoLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="RSRP : " />
+
+            <TextView
+                android:id="@+id/ecno"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryDark" />
+
+        </TableRow>
     </TableLayout>
 
     <TableRow
@@ -149,7 +240,7 @@
             android:id="@+id/location"
             android:layout_width="309dp"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimaryDark"/>
+            android:textColor="@color/colorPrimaryDark" />
 
     </TableRow>
 

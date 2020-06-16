@@ -27,7 +27,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.popup.view.*
-import java.lang.Exception
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -79,6 +78,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         createLocationRequest()
 
+
         mainHandler.post(object : Runnable {
             override fun run() {
                 measureSignalStrength()
@@ -86,6 +86,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         })
     }
+
 
     private fun getCallPermission() {
         if (ActivityCompat.checkSelfPermission(
@@ -165,8 +166,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.isMyLocationEnabled = false
     }
 
+
+
+    // whenever user's location changed, this method will be called with user's new location
     private fun updateUi(location: Location) {
+
+        // if use `currentLatLng.toString() it will return something like this : LatLng(53.000212321, 39.31543545)
         var currentLatLng = LatLng(location.latitude, location.longitude)
+
+        // create a circle centered with user's new location
         var circle = CircleOptions()
             .center(currentLatLng)
             .radius(8.0)
@@ -177,10 +185,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.addCircle(circle)
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 17f))
 
+        // store data in database with passed location as argument
         storeDataInDb(location)
     }
 
     private fun storeDataInDb(location: Location) {
+
+        // call a function that fetches network cell
+
         var f = Milestone()
         var currentLatLng = LatLng(location.latitude, location.longitude)
 
@@ -354,29 +366,38 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+
+    // this method will be called when user clicks on a circle and gets location of circle
+    // will display a popup
+    // just fetch record corresponding with location and then display it
     private fun showDialog(location: LatLng) {
 
-        dbHandler = DatabaseHandler(this)
-        var arr = dbHandler!!.readMilestoneByLocation(location.toString())
-
+//        dbHandler = DatabaseHandler(this)
+//        var arr = dbHandler!!.readMilestoneByLocation(location.toString())
+        var arr = Milestone()
 
         val mDialogView = LayoutInflater.from(this).inflate(R.layout.popup, null)
         val mBuilder = AlertDialog.Builder(this)
             .setView(mDialogView)
-            .setTitle("Network Cell Info")
+            .setTitle("Location QOC")
         val mAlertDialog = mBuilder.show()
         mDialogView.location.setText(location.latitude.toString() + "," + location.longitude.toString())
 
-        mDialogView.plmnId.setText(arr.plmn)
-        mDialogView.technology.setText(arr.technology)
-        mDialogView.racId.setText(arr.rac)
-        mDialogView.lacId.setText(arr.lac)
-        mDialogView.tacId.setText(arr.tac)
-        mDialogView.rxLev.setText(arr.rxLev)
-        mDialogView.lacId.setText(arr.lac)
-        mDialogView.c1.setText(arr.c1)
-        mDialogView.c2.setText(arr.c2)
-
+        mDialogView.plmnId.setText("1234")
+        mDialogView.technology.setText("1234")
+        mDialogView.racId.setText("1234")
+        mDialogView.lacId.setText("1234")
+        mDialogView.tacId.setText("1234")
+        mDialogView.rxLev.setText("1234")
+        mDialogView.lacId.setText("1234")
+        mDialogView.c1.setText("1234")
+        mDialogView.c2.setText("1234")
+        mDialogView.rscp.setText("1234")
+        mDialogView.rsrp.setText("1234")
+        mDialogView.rsrq.setText("1234")
+        mDialogView.ecno.setText("1234")
+        mDialogView.cellId.setText("1234")
+        mDialogView.cellId.setText("Low")
 
         mDialogView.close_btn.setOnClickListener {
             mAlertDialog.dismiss()
