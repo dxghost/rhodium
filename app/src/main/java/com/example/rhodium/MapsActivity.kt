@@ -1,15 +1,21 @@
 package com.example.rhodium
 
+import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.telephony.*
 import android.view.LayoutInflater
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.common.api.ResolvableApiException
@@ -21,11 +27,11 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.popup.view.*
-
-
-// reference: https://www.raywenderlich.com/230-introduction-to-google-maps-api-for-android-with-kotlin#toc-anchor-011
+import java.lang.Exception
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+
+    var dbHandler: DatabaseHandler? = null
 
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
@@ -34,6 +40,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
         private const val REQUEST_CHECK_SETTINGS = 2
     }
+
+    val PHONE_CODE = 101
+    val GPS_CODE = 102
 
     private var locationUpdateState = false
 
@@ -48,7 +57,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
-
+        getCallPermission()
 
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -76,7 +85,37 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 mainHandler.postDelayed(this, 2000)
             }
         })
+    }
 
+    private fun getCallPermission() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                GPS_CODE
+            )
+        } else {
+            Toast.makeText(this, "GPS_ACCESS_ALREADY_ACQUIRED", Toast.LENGTH_SHORT).show()
+        }
+
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_PHONE_STATE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.READ_PHONE_STATE),
+                PHONE_CODE
+            )
+        } else {
+            Toast.makeText(this, "CALL_ACCESS_ALREADY_ACQUIRED", Toast.LENGTH_SHORT).show()
+        }
 
     }
 
@@ -101,7 +140,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             startLocationUpdates()
         }
     }
-
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
@@ -139,7 +177,31 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.addCircle(circle)
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 17f))
 
+        storeDataInDb(location)
+    }
 
+    private fun storeDataInDb(location: Location) {
+        var f = Milestone()
+        var currentLatLng = LatLng(location.latitude, location.longitude)
+
+        f.location = currentLatLng.toString()
+        f.technology = "3g"
+        f.signalStrength = "123"
+        f.lac = "1234"
+        f.rxLev = "1234"
+        f.tac = "1234"
+        f.rac = "1234"
+        f.plmn = "1234"
+        f.c1 = "1234"
+        f.c2 = "1234"
+        f.rscp = "123"
+        f.rsrp = "1234"
+        f.rsrq = "1234"
+        f.ecno = "1234"
+        f.id = 1234
+        f.cellID = "1234"
+        f.rxLev = "1234"
+        dbHandler?.createMilestone(f)
     }
 
     private fun getLocationPermission() {
@@ -155,7 +217,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             )
         }
     }
-
 
     private fun startLocationUpdates() {
         mFusedLocationProviderClient.requestLocationUpdates(
@@ -187,29 +248,92 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             startLocationUpdates()
         }
         task.addOnFailureListener { e ->
-            // 6
             if (e is ResolvableApiException) {
-                // Location settings are not satisfied, but this can be fixed
-                // by showing the user a dialog.
                 try {
-                    // Show the dialog by calling startResolutionForResult(),
-                    // and check the result in onActivityResult().
                     e.startResolutionForResult(
                         this@MapsActivity,
                         REQUEST_CHECK_SETTINGS
                     )
                 } catch (sendEx: IntentSender.SendIntentException) {
-                    // Ignore the error.
                 }
             }
         }
     }
 
+    private fun getCellInfoJson() : Any {
+        dbHandler = DatabaseHandler(this)
+
+        val tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        var netWorkType = techTypes[tm.networkType]
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return 0
+        }
+
+        var allCellInfo = tm.allCellInfo
+        var currentCell = allCellInfo.get(0)
+        when (netWorkType) {
+            "NETWORK_TYPE_EDGE" -> {
+                for (cellInfo in allCellInfo) {
+                    if (cellInfo is CellInfoGsm) {
+                        currentCell = cellInfo
+                    }
+                }
+            }
+            "NETWORK_TYPE_GPRS" -> {
+                for (cellInfo in allCellInfo) {
+                    if (cellInfo is CellInfoGsm)
+                        currentCell = cellInfo
+                }
+            }
+            "NETWORK_TYPE_HSPA" -> {
+                for (cellInfo in allCellInfo) {
+                    if (cellInfo is CellInfoWcdma)
+                        currentCell = cellInfo
+                }
+            }
+            "NETWORK_TYPE_UMTS" -> {
+                for (cellInfo in allCellInfo) {
+                    if (cellInfo is CellInfoWcdma)
+                        currentCell = cellInfo
+                }
+            }
+            "NETWORK_TYPE_LTE" -> {
+                for (cellInfo in allCellInfo) {
+                    if (cellInfo is CellInfoLte)
+                        currentCell = cellInfo
+                }
+            }
+            else ->
+                currentCell = allCellInfo[0]
+        }
+
+
+        var f = Milestone()
+        var currentLatLng = LatLng(lastLocation.latitude, lastLocation.longitude)
+        f.location = currentLatLng.toString()
+        f.technology = "3g"
+        f.lac = "1234"
+        f.rxLev = "1234"
+        f.tac = "1234"
+        f.rac = "1234"
+        f.plmn = "1234"
+        f.c1 = "1234"
+        f.c2 = "1234"
+        dbHandler!!.createMilestone(f)
+        var arr = dbHandler!!.readMilestones()
+        var json = getCellInfo(currentCell)
+        return json
+    }
+
     private fun measureSignalStrength() {
-        // your code here
         val rnds = (0..6).random()
         circleColor = getColor(R.color.poor)
-        println(rnds)
+
         if (rnds == 0) {
             circleColor = getColor(R.color.excellent)
         }
@@ -231,15 +355,66 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun showDialog(location: LatLng) {
+
+        dbHandler = DatabaseHandler(this)
+        var arr = dbHandler!!.readMilestoneByLocation(location.toString())
+
+
         val mDialogView = LayoutInflater.from(this).inflate(R.layout.popup, null)
         val mBuilder = AlertDialog.Builder(this)
             .setView(mDialogView)
-            .setTitle("QOC")
+            .setTitle("Network Cell Info")
         val mAlertDialog = mBuilder.show()
-        mDialogView.dialog_text.setText(location.toString())
+        mDialogView.location.setText(location.latitude.toString() + "," + location.longitude.toString())
+
+        mDialogView.plmnId.setText(arr.plmn)
+        mDialogView.technology.setText(arr.technology)
+        mDialogView.racId.setText(arr.rac)
+        mDialogView.lacId.setText(arr.lac)
+        mDialogView.tacId.setText(arr.tac)
+        mDialogView.rxLev.setText(arr.rxLev)
+        mDialogView.lacId.setText(arr.lac)
+        mDialogView.c1.setText(arr.c1)
+        mDialogView.c2.setText(arr.c2)
+
+
         mDialogView.close_btn.setOnClickListener {
             mAlertDialog.dismiss()
         }
 
     }
+}
+
+
+@RequiresApi(Build.VERSION_CODES.O)
+private fun getCellInfo(cellInfo: CellInfo): HashMap<Any?, String?> {
+    var map = hashMapOf<Any?, String?>()
+    if (cellInfo is CellInfoGsm) {
+        val cellIdentityGsm = cellInfo.cellIdentity
+        val cellSignalGsm = cellInfo.cellSignalStrength
+        map["cell_identity"] = cellIdentityGsm.cid.toString()
+        map["LAC"] = cellIdentityGsm.lac.toString()
+        map["RxLev"] = cellSignalGsm.asuLevel.toString()
+        map["Level_of_strength"] = cellSignalGsm.level.toString()
+        map["type"] = "2"
+    } else if (cellInfo is CellInfoWcdma) {
+        val cellIdentityWcdma = cellInfo.cellIdentity
+        val cellSignalWcdma = cellInfo.cellSignalStrength
+        map["cell_identity"] = cellIdentityWcdma.cid.toString()
+        map["LAC"] = cellIdentityWcdma.lac.toString()
+        map["RSCP"] = cellSignalWcdma.dbm.toString()
+        map["Level_of_strength"] = cellSignalWcdma.level.toString()
+        map["type"] = "3"
+    } else if (cellInfo is CellInfoLte) {
+        val cellIdentityLte = cellInfo.cellIdentity
+        val cellSignalLte = cellInfo.cellSignalStrength
+        map["cell_identity"] = cellIdentityLte.ci.toString()
+        map["TAC"] = cellIdentityLte.tac.toString()
+        map["RSRP"] = cellSignalLte.rsrp.toString()
+        map["RSRQ"] = cellSignalLte.rsrq.toString()
+        map["CINR"] = cellSignalLte.rssnr.toString()
+        map["Level_of_strength"] = cellSignalLte.level.toString()
+        map["type"] = "4"
+    }
+    return map
 }
