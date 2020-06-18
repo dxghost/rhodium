@@ -110,7 +110,7 @@ class DatabaseHandler(context: Context) :
         return milestone
     }
 
-    fun readMilestoneByLocation(location: String): Milestone{
+    fun readMilestoneByLocation(location: String): Milestone {
         var db: SQLiteDatabase = writableDatabase
         var cursor: Cursor = db.query(
             TABLE_NAME, arrayOf(
@@ -132,10 +132,13 @@ class DatabaseHandler(context: Context) :
             null, null, null, null
         )
 
-        if (cursor != null)
-            cursor.moveToFirst()
 
         var milestone = Milestone()
+
+        if (!cursor.moveToNext()) {
+            return milestone
+        }
+
         milestone.id = cursor.getInt(cursor.getColumnIndex(KEY_ID))
         milestone.location = cursor.getString(
             cursor.getColumnIndex(

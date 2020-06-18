@@ -14,7 +14,6 @@ import android.os.Handler
 import android.os.Looper
 import android.telephony.*
 import android.view.LayoutInflater
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -31,7 +30,7 @@ import kotlinx.android.synthetic.main.popup.view.*
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     var dbHandler: DatabaseHandler? = null
-    var id = 0
+
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
 
@@ -41,7 +40,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     val PHONE_CODE = 101
-    val GPS_CODE = 102
 
     private var locationUpdateState = false
 
@@ -60,7 +58,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         dbHandler = DatabaseHandler(this)
 
         val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment
+                .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
 
@@ -91,34 +89,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun getCallPermission() {
         if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
+                        this,
+                        Manifest.permission.READ_PHONE_STATE
+                ) != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
-                GPS_CODE
+                    this,
+                    arrayOf(Manifest.permission.READ_PHONE_STATE),
+                    PHONE_CODE
             )
-        } else {
-            Toast.makeText(this, "GPS_ACCESS_ALREADY_ACQUIRED", Toast.LENGTH_SHORT).show()
         }
-
-
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_PHONE_STATE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.READ_PHONE_STATE),
-                PHONE_CODE
-            )
-        } else {
-            Toast.makeText(this, "CALL_ACCESS_ALREADY_ACQUIRED", Toast.LENGTH_SHORT).show()
-        }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -158,6 +138,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.setOnCircleClickListener { circle ->
             showDialog(circle.center)
         }
+
+        var nodes = dbHandler!!.readMilestones()
+
+        for (node in nodes) {
+            var latlong = node.location!!.split(",")
+            var targetlocation = Location("")
+            targetlocation.latitude = latlong[0].toDouble()
+            targetlocation.longitude = latlong[1].toDouble()
+            updateUi(targetlocation)
+        }
+
+
     }
 
     private fun setMapUiSetting() {
@@ -168,36 +160,41 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
-
     // whenever user's location changed, this method will be called with user's new location
     private fun updateUi(location: Location) {
-
-        // if use `currentLatLng.toString() it will return something like this : LatLng(53.000212321, 39.31543545)
         var currentLatLng = LatLng(location.latitude, location.longitude)
+
+        // store data in database with passed location as argument
+        // if output true , then there is a circle with same location on map so don't need to add
+        if(storeDataInDb(location)){
+            return
+        }
 
         // create a circle centered with user's new location
         var circle = CircleOptions()
-            .center(currentLatLng)
-            .radius(8.0)
-            .fillColor(circleColor)
+                .center(currentLatLng)
+                .radius(8.0)
+                .fillColor(circleColor)
 
         circle.clickable(true)
         circle.strokeWidth(0f)
         mMap.addCircle(circle)
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 17f))
 
-        // store data in database with passed location as argument
-        storeDataInDb(location)
     }
 
-    private fun storeDataInDb(location: Location) {
-
-        // call a function that fetches network cell
-
+    private fun storeDataInDb(location: Location): Boolean {
         var f = Milestone()
         var currentLatLng = LatLng(location.latitude, location.longitude)
+        var currentLatLngString = currentLatLng.latitude.toString() + "," + currentLatLng.longitude.toString()
 
-        f.location = currentLatLng.toString()
+        var cellInfo = dbHandler!!.readMilestoneByLocation(currentLatLngString)
+
+        if (cellInfo.location != null) {
+            return true
+        }
+
+        f.location = currentLatLng.latitude.toString() + "," + currentLatLng.longitude.toString()
         f.technology = "3g"
         f.signalStrength = currentLatLng.latitude.toString()
         f.lac = currentLatLng.longitude.toString()
@@ -214,27 +211,28 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         f.cellID = currentLatLng.longitude.toString()
         f.rxLev = currentLatLng.latitude.toString()
         dbHandler!!.createMilestone(f)
+        return false
     }
 
     private fun getLocationPermission() {
         if (ActivityCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
+                        this,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
-                this,
-                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_PERMISSION_REQUEST_CODE
+                    this,
+                    arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                    LOCATION_PERMISSION_REQUEST_CODE
             )
         }
     }
 
     private fun startLocationUpdates() {
         mFusedLocationProviderClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            null /* Looper */
+                locationRequest,
+                locationCallback,
+                null /* Looper */
         )
     }
 
@@ -248,7 +246,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
         val builder = LocationSettingsRequest.Builder()
-            .addLocationRequest(locationRequest)
+                .addLocationRequest(locationRequest)
 
 
         val client = LocationServices.getSettingsClient(this)
@@ -263,8 +261,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             if (e is ResolvableApiException) {
                 try {
                     e.startResolutionForResult(
-                        this@MapsActivity,
-                        REQUEST_CHECK_SETTINGS
+                            this@MapsActivity,
+                            REQUEST_CHECK_SETTINGS
                     )
                 } catch (sendEx: IntentSender.SendIntentException) {
                 }
@@ -272,16 +270,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun getCellInfoJson() : Any {
+    private fun getCellInfoJson(): Any {
         dbHandler = DatabaseHandler(this)
 
         val tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
         var netWorkType = techTypes[tm.networkType]
 
         if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
+                        this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
         ) {
             return 0
         }
@@ -371,13 +369,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     // will display a popup
     // just fetch record corresponding with location and then display it
     private fun showDialog(location: LatLng) {
-        var cellInfo  = dbHandler!!.readMilestoneByLocation(location.toString())
+
+        var currentLatLngString = location.latitude.toString() + "," + location.longitude.toString()
+        var cellInfo = dbHandler!!.readMilestoneByLocation(currentLatLngString)
 
 
         val mDialogView = LayoutInflater.from(this).inflate(R.layout.popup, null)
         val mBuilder = AlertDialog.Builder(this)
-            .setView(mDialogView)
-            .setTitle("Location QOC")
+                .setView(mDialogView)
+                .setTitle("Location QOC")
         val mAlertDialog = mBuilder.show()
         mDialogView.location.setText(location.latitude.toString() + "," + location.longitude.toString())
 
