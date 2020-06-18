@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
@@ -143,10 +144,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         for (node in nodes) {
             var latlong = node.location!!.split(",")
-            var targetlocation = Location("")
-            targetlocation.latitude = latlong[0].toDouble()
-            targetlocation.longitude = latlong[1].toDouble()
-            updateUi(targetlocation)
+            var targetlocation = LatLng(latlong[0].toDouble(), latlong[1].toDouble())
+            drawCircleOnMap(targetlocation, node.color!!.toInt())
         }
 
 
@@ -159,6 +158,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.isMyLocationEnabled = false
     }
 
+    private fun drawCircleOnMap(location: LatLng, color: Int) {
+        var circle = CircleOptions()
+                .center(location)
+                .radius(8.0)
+                .fillColor(color)
+
+        circle.clickable(true)
+        circle.strokeWidth(0f)
+        mMap.addCircle(circle)
+    }
 
     // whenever user's location changed, this method will be called with user's new location
     private fun updateUi(location: Location) {
@@ -166,7 +175,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // store data in database with passed location as argument
         // if output true , then there is a circle with same location on map so don't need to add
-        if(storeDataInDb(location)){
+        if (storeDataInDb(location)) {
             return
         }
 
@@ -210,6 +219,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         f.ecno = currentLatLng.latitude.toString()
         f.cellID = currentLatLng.longitude.toString()
         f.rxLev = currentLatLng.latitude.toString()
+        f.color = measureSignalStrength().toString()
         dbHandler!!.createMilestone(f)
         return false
     }
@@ -340,7 +350,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         return json
     }
 
-    private fun measureSignalStrength() {
+    private fun measureSignalStrength(): Int {
         val rnds = (0..6).random()
         circleColor = getColor(R.color.poor)
 
@@ -362,6 +372,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         if (rnds == 5) {
             circleColor = getColor(R.color.noSignal)
         }
+        return circleColor
     }
 
 

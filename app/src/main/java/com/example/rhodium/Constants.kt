@@ -20,3 +20,5 @@ const val KEY_MILESTONE_RAC: String = "milestone_rac"
 const val KEY_MILESTONE_TAC: String = "milestone_tac"
 const val KEY_MILESTONE_PLMN: String = "milestone_plmn"
 const val KEY_MILESTONE_CELL_ID: String = "milestone_cell_id"
+const val KEY_MILESTONE_COLOR: String = "milestone_color"
+

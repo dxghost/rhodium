@@ -24,6 +24,7 @@ class DatabaseHandler(context: Context) :
                     KEY_MILESTONE_RAC + " TEXT," +
                     KEY_MILESTONE_TAC + " TEXT," +
                     KEY_MILESTONE_PLMN + " TEXT," +
+                    KEY_MILESTONE_COLOR + " TEXT," +
                     KEY_MILESTONE_CELL_ID + " Text" + ");"
 
         db?.execSQL(CREATE_MILESTONE_TABLE)
@@ -51,6 +52,7 @@ class DatabaseHandler(context: Context) :
         values.put(KEY_MILESTONE_TAC, milestone.tac)
         values.put(KEY_MILESTONE_PLMN, milestone.plmn)
         values.put(KEY_MILESTONE_CELL_ID, milestone.cellID)
+        values.put(KEY_MILESTONE_COLOR, milestone.color)
 
         var insert = db.insert(TABLE_NAME, null, values)
 
@@ -76,6 +78,7 @@ class DatabaseHandler(context: Context) :
                 KEY_MILESTONE_RAC,
                 KEY_MILESTONE_TAC,
                 KEY_MILESTONE_PLMN,
+                KEY_MILESTONE_COLOR,
                 KEY_MILESTONE_CELL_ID
             ), KEY_ID + "=?", arrayOf(id.toString()),
             null, null, null, null
@@ -106,6 +109,7 @@ class DatabaseHandler(context: Context) :
         milestone.tac = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_TAC))
         milestone.plmn = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_PLMN))
         milestone.cellID = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_CELL_ID))
+        milestone.color = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_COLOR))
 
         return milestone
     }
@@ -127,6 +131,7 @@ class DatabaseHandler(context: Context) :
                 KEY_MILESTONE_RAC,
                 KEY_MILESTONE_TAC,
                 KEY_MILESTONE_PLMN,
+                KEY_MILESTONE_COLOR,
                 KEY_MILESTONE_CELL_ID
             ), KEY_MILESTONE_LOCATION + "=?", arrayOf(location),
             null, null, null, null
@@ -160,6 +165,7 @@ class DatabaseHandler(context: Context) :
         milestone.tac = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_TAC))
         milestone.plmn = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_PLMN))
         milestone.cellID = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_CELL_ID))
+        milestone.color = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_COLOR))
 
         return milestone
     }
@@ -199,6 +205,7 @@ class DatabaseHandler(context: Context) :
                 milestone.tac = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_TAC))
                 milestone.plmn = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_PLMN))
                 milestone.cellID = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_CELL_ID))
+                milestone.color = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_COLOR))
 
                 list.add(milestone)
 

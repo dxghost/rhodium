@@ -17,6 +17,7 @@ class Milestone() {
     var lac: String? = null
     var plmn: String? = null
     var cellID: String? = null
+    var color: String? = null
     var id: Int? = null
 
 
@@ -36,6 +37,7 @@ class Milestone() {
         plmn: String,
         id: Int,
         cellID: String,
+        color: String,
         rxLev: String
     ) : this() {
 
@@ -55,7 +57,7 @@ class Milestone() {
         this.id = id
         this.cellID = cellID
         this.rxLev = rxLev
-
+        this.color = color
     }
 
 
