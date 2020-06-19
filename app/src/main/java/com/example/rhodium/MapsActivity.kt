@@ -1,13 +1,11 @@
 package com.example.rhodium
 
 import android.Manifest
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
@@ -181,6 +179,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     // whenever user's location changed, this method will be called with user's new location
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun updateUi(location: Location) {
         var currentLatLng = LatLng(location.latitude, location.longitude)
 
@@ -203,8 +202,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun storeDataInDb(location: Location): Boolean {
-        var f = Milestone()
+
+        var f = initMilestone()
         var currentLatLng = LatLng(location.latitude, location.longitude)
         var currentLatLngString = currentLatLng.latitude.toString() + "," + currentLatLng.longitude.toString()
 
@@ -215,21 +216,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         f.location = currentLatLng.latitude.toString() + "," + currentLatLng.longitude.toString()
-        f.technology = "3g"
-        f.signalStrength = currentLatLng.latitude.toString()
-        f.lac = currentLatLng.longitude.toString()
-        f.rxLev = currentLatLng.longitude.toString()
-        f.tac = currentLatLng.latitude.toString()
-        f.rac = currentLatLng.longitude.toString()
-        f.plmn = currentLatLng.latitude.toString()
-        f.c1 = currentLatLng.longitude.toString()
-        f.c2 = currentLatLng.latitude.toString()
-        f.rscp = currentLatLng.longitude.toString()
-        f.rsrp = currentLatLng.latitude.toString()
-        f.rsrq = currentLatLng.longitude.toString()
-        f.ecno = currentLatLng.latitude.toString()
-        f.cellID = currentLatLng.longitude.toString()
-        f.rxLev = currentLatLng.latitude.toString()
         f.color = measureSignalStrength().toString()
         dbHandler!!.createMilestone(f)
         return false
@@ -280,19 +266,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun getCellInfoJson(): Any {
+    private fun initMilestone(): Milestone {
         dbHandler = DatabaseHandler(this)
 
         val tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
         var netWorkType = techTypes[tm.networkType]
 
-        if (ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return 0
-        }
 
         var allCellInfo = tm.allCellInfo
         var currentCell = allCellInfo.get(0)
@@ -334,20 +313,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
         var f = Milestone()
-        var currentLatLng = LatLng(lastLocation.latitude, lastLocation.longitude)
-        f.location = currentLatLng.toString()
-        f.technology = "3g"
-        f.lac = "1234"
-        f.rxLev = "1234"
-        f.tac = "1234"
-        f.rac = "1234"
-        f.plmn = "1234"
-        f.c1 = "1234"
-        f.c2 = "1234"
-        dbHandler!!.createMilestone(f)
-        var arr = dbHandler!!.readMilestones()
         var json = getCellInfo(currentCell)
-        return json
+        f.technology = json["type"]
+        f.lac = json["LAC"]
+        f.rxLev = json["RxLev"]
+        f.tac = json["TAC"]
+        f.cinr = json["CINR"]
+        f.plmn = tm.networkOperator
+        f.c1 = json["C1"]
+        f.c2 = json["C2"]
+        f.rsrp = json["RSRP"]
+        f.rsrq = json["RSRQ"]
+        f.rscp = json["RSCP"]
+        f.cellID = json["cell_identity"]
+        f.signalStrength = json["signal_strength"]
+
+        return f
     }
 
     private fun measureSignalStrength(): Int {
@@ -394,7 +375,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         mDialogView.plmnId.setText(cellInfo.plmn)
         mDialogView.technology.setText(cellInfo.technology)
-        mDialogView.racId.setText(cellInfo.rac)
+        mDialogView.cinrId.setText(cellInfo.cinr)
         mDialogView.lacId.setText(cellInfo.lac)
         mDialogView.tacId.setText(cellInfo.tac)
         mDialogView.rxLev.setText(cellInfo.rxLev)
@@ -403,7 +384,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mDialogView.rscp.setText(cellInfo.rscp)
         mDialogView.rsrp.setText(cellInfo.rsrp)
         mDialogView.rsrq.setText(cellInfo.rsrq)
-        mDialogView.ecno.setText(cellInfo.ecno)
         mDialogView.cellId.setText(cellInfo.cellID)
         mDialogView.signalStrength.setText(cellInfo.signalStrength)
 
@@ -424,16 +404,16 @@ private fun getCellInfo(cellInfo: CellInfo): HashMap<Any?, String?> {
         map["cell_identity"] = cellIdentityGsm.cid.toString()
         map["LAC"] = cellIdentityGsm.lac.toString()
         map["RxLev"] = cellSignalGsm.asuLevel.toString()
-        map["Level_of_strength"] = cellSignalGsm.level.toString()
-        map["type"] = "2"
+        map["signal_strength"] = cellSignalGsm.level.toString()
+        map["type"] = "2G"
     } else if (cellInfo is CellInfoWcdma) {
         val cellIdentityWcdma = cellInfo.cellIdentity
         val cellSignalWcdma = cellInfo.cellSignalStrength
         map["cell_identity"] = cellIdentityWcdma.cid.toString()
         map["LAC"] = cellIdentityWcdma.lac.toString()
         map["RSCP"] = cellSignalWcdma.dbm.toString()
-        map["Level_of_strength"] = cellSignalWcdma.level.toString()
-        map["type"] = "3"
+        map["signal_strength"] = cellSignalWcdma.level.toString()
+        map["type"] = "3G"
     } else if (cellInfo is CellInfoLte) {
         val cellIdentityLte = cellInfo.cellIdentity
         val cellSignalLte = cellInfo.cellSignalStrength
@@ -442,8 +422,8 @@ private fun getCellInfo(cellInfo: CellInfo): HashMap<Any?, String?> {
         map["RSRP"] = cellSignalLte.rsrp.toString()
         map["RSRQ"] = cellSignalLte.rsrq.toString()
         map["CINR"] = cellSignalLte.rssnr.toString()
-        map["Level_of_strength"] = cellSignalLte.level.toString()
-        map["type"] = "4"
+        map["signal_strength"] = cellSignalLte.level.toString()
+        map["type"] = "4G"
     }
     return map
 }

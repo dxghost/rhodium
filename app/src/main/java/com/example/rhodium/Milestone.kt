@@ -1,6 +1,7 @@
 package com.example.rhodium
 
 
+//TODO add CINR
 class Milestone() {
     var location: String? = null
     var technology: String? = null
@@ -12,7 +13,7 @@ class Milestone() {
     var rsrp: String? = null
     var rsrq: String? = null
     var ecno: String? = null
-    var rac: String? = null
+    var cinr: String? = null
     var tac: String? = null
     var lac: String? = null
     var plmn: String? = null
@@ -31,7 +32,7 @@ class Milestone() {
         rsrp: String,
         rsrq: String,
         ecno: String,
-        rac: String,
+        cinr: String,
         tac: String,
         lac: String,
         plmn: String,
@@ -50,7 +51,7 @@ class Milestone() {
         this.rsrp = rsrp
         this.rsrq = rsrq
         this.ecno = ecno
-        this.rac = rac
+        this.cinr = cinr
         this.tac = tac
         this.lac = lac
         this.plmn = plmn

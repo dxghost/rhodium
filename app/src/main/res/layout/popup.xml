@@ -47,13 +47,13 @@
             android:padding="10dp">
 
             <TextView
-                android:id="@+id/racIdLabel"
+                android:id="@+id/tacIdLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Rac ID : " />
+                android:text="Tac ID : " />
 
             <TextView
-                android:id="@+id/racId"
+                android:id="@+id/tacId"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorPrimaryDark" />
@@ -77,13 +77,13 @@
             android:padding="10dp">
 
             <TextView
-                android:id="@+id/tacIdLabel"
+                android:id="@+id/cinrIdLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tac ID : " />
+                android:text="CINR :" />
 
             <TextView
-                android:id="@+id/tacId"
+                android:id="@+id/cinrId"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorPrimaryDark" />
@@ -211,14 +211,14 @@
                 android:textColor="@color/colorPrimaryDark" />
 
             <TextView
-                android:id="@+id/ecnoLabel"
+                android:id="@+id/locationLabel"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="RSRP : " />
+                android:layout_height="wrap_content"
+                android:text="Location : " />
 
             <TextView
-                android:id="@+id/ecno"
-                android:layout_width="wrap_content"
+                android:id="@+id/location"
+                android:layout_width="309dp"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorPrimaryDark" />
 
@@ -229,18 +229,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp">
-
-        <TextView
-            android:id="@+id/locationLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Location : " />
-
-        <TextView
-            android:id="@+id/location"
-            android:layout_width="309dp"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimaryDark" />
 
     </TableRow>
 

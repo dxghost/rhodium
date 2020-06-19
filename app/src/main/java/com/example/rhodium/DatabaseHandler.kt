@@ -21,7 +21,7 @@ class DatabaseHandler(context: Context) :
                     KEY_MILESTONE_ECNO + " TEXT," +
                     KEY_MILESTONE_RSRP + " TEXT," +
                     KEY_MILESTONE_RSRQ + " TEXT," +
-                    KEY_MILESTONE_RAC + " TEXT," +
+                    KEY_MILESTONE_CINR + " TEXT," +
                     KEY_MILESTONE_TAC + " TEXT," +
                     KEY_MILESTONE_PLMN + " TEXT," +
                     KEY_MILESTONE_COLOR + " TEXT," +
@@ -39,7 +39,7 @@ class DatabaseHandler(context: Context) :
 
     fun createMilestone(milestone: Milestone) {
         var db: SQLiteDatabase = writableDatabase
-        var values: ContentValues = ContentValues()
+        var values = ContentValues()
         values.put(KEY_MILESTONE_LOCATION, milestone.location)
         values.put(KEY_MILESTONE_TECH, milestone.technology)
         values.put(KEY_MILESTONE_SIGNAL_STRENGTH, milestone.signalStrength)
@@ -48,7 +48,7 @@ class DatabaseHandler(context: Context) :
         values.put(KEY_MILESTONE_RSCP, milestone.rscp)
         values.put(KEY_MILESTONE_ECNO, milestone.rsrp)
         values.put(KEY_MILESTONE_RSRQ, milestone.rsrq)
-        values.put(KEY_MILESTONE_RAC, milestone.rac)
+        values.put(KEY_MILESTONE_CINR, milestone.cinr)
         values.put(KEY_MILESTONE_TAC, milestone.tac)
         values.put(KEY_MILESTONE_PLMN, milestone.plmn)
         values.put(KEY_MILESTONE_CELL_ID, milestone.cellID)
@@ -75,7 +75,7 @@ class DatabaseHandler(context: Context) :
                 KEY_MILESTONE_ECNO,
                 KEY_MILESTONE_RSRP,
                 KEY_MILESTONE_RSRQ,
-                KEY_MILESTONE_RAC,
+                KEY_MILESTONE_CINR,
                 KEY_MILESTONE_TAC,
                 KEY_MILESTONE_PLMN,
                 KEY_MILESTONE_COLOR,
@@ -105,7 +105,7 @@ class DatabaseHandler(context: Context) :
         milestone.rscp = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_RSCP))
         milestone.rsrp = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_RSRP))
         milestone.rsrq = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_RSRQ))
-        milestone.rac = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_RAC))
+        milestone.cinr = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_CINR))
         milestone.tac = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_TAC))
         milestone.plmn = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_PLMN))
         milestone.cellID = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_CELL_ID))
@@ -128,7 +128,7 @@ class DatabaseHandler(context: Context) :
                 KEY_MILESTONE_ECNO,
                 KEY_MILESTONE_RSRP,
                 KEY_MILESTONE_RSRQ,
-                KEY_MILESTONE_RAC,
+                KEY_MILESTONE_CINR,
                 KEY_MILESTONE_TAC,
                 KEY_MILESTONE_PLMN,
                 KEY_MILESTONE_COLOR,
@@ -161,7 +161,7 @@ class DatabaseHandler(context: Context) :
         milestone.rscp = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_RSCP))
         milestone.rsrp = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_RSRP))
         milestone.rsrq = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_RSRQ))
-        milestone.rac = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_RAC))
+        milestone.cinr = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_CINR))
         milestone.tac = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_TAC))
         milestone.plmn = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_PLMN))
         milestone.cellID = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_CELL_ID))
@@ -201,7 +201,7 @@ class DatabaseHandler(context: Context) :
                 milestone.rscp = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_RSCP))
                 milestone.rsrp = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_RSRP))
                 milestone.rsrq = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_RSRQ))
-                milestone.rac = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_RAC))
+                milestone.cinr = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_CINR))
                 milestone.tac = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_TAC))
                 milestone.plmn = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_PLMN))
                 milestone.cellID = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_CELL_ID))
