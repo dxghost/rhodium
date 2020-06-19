@@ -28,19 +28,35 @@ import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.popup.view.*
 
+val techTypes = arrayListOf(
+    "NETWORK_TYPE_UNKNOWN",
+    "NETWORK_TYPE_GPRS",
+    "NETWORK_TYPE_EDGE",
+    "NETWORK_TYPE_UMTS",
+    "NETWORK_TYPE_CDMA",
+    "NETWORK_TYPE_EVDO_0",
+    "NETWORK_TYPE_EVDO_A",
+    "NETWORK_TYPE_1xRTT",
+    "NETWORK_TYPE_HSDPA",
+    "NETWORK_TYPE_HSUPA",
+    "NETWORK_TYPE_HSPA",
+    "NETWORK_TYPE_IDEN",
+    "NETWORK_TYPE_EVDO_B",
+    "NETWORK_TYPE_LTE",
+    "NETWORK_TYPE_EHRPD",
+    "NETWORK_TYPE_HSPAP",
+    "NETWORK_TYPE_GSM",
+    "NETWORK_TYPE_TD_SCDMA",
+    "NETWORK_TYPE_IWLAN"
+)
+
+
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     var dbHandler: DatabaseHandler? = null
 
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
-
-    companion object {
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
-        private const val REQUEST_CHECK_SETTINGS = 2
-    }
-
-    val PHONE_CODE = 101
 
     private var locationUpdateState = false
 
@@ -55,7 +71,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
-        getCallPermission()
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_PHONE_STATE
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            startActivity(Intent(this, Permissions::class.java))
+        }
+
         dbHandler = DatabaseHandler(this)
 
         val mapFragment = supportFragmentManager
@@ -88,28 +116,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
-    private fun getCallPermission() {
-        if (ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.READ_PHONE_STATE
-                ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.READ_PHONE_STATE),
-                    PHONE_CODE
-            )
-        }
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CHECK_SETTINGS) {
-            if (resultCode == Activity.RESULT_OK) {
+
                 locationUpdateState = true
                 startLocationUpdates()
-            }
-        }
     }
 
     override fun onPause() {
@@ -126,7 +138,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        getLocationPermission()
         setMapUiSetting()
 
         mFusedLocationProviderClient.lastLocation.addOnSuccessListener(this) { location ->
@@ -224,19 +235,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         return false
     }
 
-    private fun getLocationPermission() {
-        if (ActivityCompat.checkSelfPermission(
-                        this,
-                        android.Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-                    LOCATION_PERMISSION_REQUEST_CODE
-            )
-        }
-    }
+
 
     private fun startLocationUpdates() {
         mFusedLocationProviderClient.requestLocationUpdates(
@@ -272,7 +271,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 try {
                     e.startResolutionForResult(
                             this@MapsActivity,
-                            REQUEST_CHECK_SETTINGS
+                            PHONE_CODE
                     )
                 } catch (sendEx: IntentSender.SendIntentException) {
                 }
@@ -280,6 +279,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun getCellInfoJson(): Any {
         dbHandler = DatabaseHandler(this)
 
