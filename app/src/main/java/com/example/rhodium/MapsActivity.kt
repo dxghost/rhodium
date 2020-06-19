@@ -94,6 +94,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
         locationCallback = object : LocationCallback() {
+            @RequiresApi(Build.VERSION_CODES.O)
             override fun onLocationResult(p0: LocationResult) {
                 super.onLocationResult(p0)
 
@@ -107,7 +108,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         mainHandler.post(object : Runnable {
             override fun run() {
-                measureSignalStrength()
+//                measureSignalStrength()
                 mainHandler.postDelayed(this, 2000)
             }
         })
@@ -134,6 +135,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         setMapUiSetting()
@@ -216,7 +218,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         f.location = currentLatLng.latitude.toString() + "," + currentLatLng.longitude.toString()
-        f.color = measureSignalStrength().toString()
+        var sigStrength = f.signalStrength?.toInt() ?: 0
+        f.color = measureSignalStrength(sigStrength).toString()
         dbHandler!!.createMilestone(f)
         return false
     }
@@ -331,28 +334,27 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         return f
     }
 
-    private fun measureSignalStrength(): Int {
-        val rnds = (0..6).random()
+    private fun measureSignalStrength(strength: Int): Int {
         circleColor = getColor(R.color.poor)
 
-        if (rnds == 0) {
-            circleColor = getColor(R.color.excellent)
-        }
-        if (rnds == 1) {
-            circleColor = getColor(R.color.poor)
-        }
-        if (rnds == 2) {
-            circleColor = getColor(R.color.fair)
-        }
-        if (rnds == 3) {
+        if (strength == 0) {
             circleColor = getColor(R.color.veryPoor)
         }
-        if (rnds == 4) {
+        if (strength == 1) {
+            circleColor = getColor(R.color.poor)
+        }
+        if (strength == 2) {
+            circleColor = getColor(R.color.fair)
+        }
+        if (strength == 3) {
             circleColor = getColor(R.color.good)
         }
-        if (rnds == 5) {
-            circleColor = getColor(R.color.noSignal)
+        if (strength >= 4) {
+            circleColor = getColor(R.color.excellent)
         }
+//        if (streng == 5) {
+//            circleColor = getColor(R.color.noSignal)
+//        }
         return circleColor
     }
 
