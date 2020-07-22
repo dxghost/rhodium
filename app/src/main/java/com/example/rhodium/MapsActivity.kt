@@ -315,6 +315,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun pingToSite() {
+        // @todo
         // this code does not work !
         var first = TrafficStats.getTotalRxPackets()
 
@@ -343,14 +344,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     }
 
-    private fun measureUploadRate(file: File, len: Int) {
+    private fun measureUploadRate(file: File) {
 
         var first = TrafficStats.getTotalTxBytes()
 
+        // measure time before and after transmission
         val begin = Date().time
+
         var url = "http://uupload.ir/process.php"
+        // alternative url
         // var url = "http://speedtest.tele2.net/upload.php"
         // var url = "http://www.csm-testcenter.org/test"
+
+
+        // Blocking code
         try {
             val response = Unirest.post(url)
                 .field("file", file)
@@ -359,18 +366,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         }
 
+
         var sec = TrafficStats.getTotalTxBytes()
+
+        // Get number of bytes transmitted
         var delta = sec - first
 
         val end = Date().time
+
+        // Calculate time difference
         var difference: Float = (end - begin).toFloat().div(1000)
+
         uploadRate = (delta).toDouble().div(difference * 1000).toInt()
-
-
     }
 
     private fun measureDownloadRate() {
-
+        // it measures time while downloading a file
         val begin = Date().time
 
         var testUrl =
@@ -392,7 +403,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         var file = File(Environment.getExternalStorageDirectory(), "test.zip")
         file.writeBytes(data)
-        measureUploadRate(file, data.size)
+        measureUploadRate(file)
 
     }
 
