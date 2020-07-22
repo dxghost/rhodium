@@ -282,7 +282,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun createLocationRequest() {
 
         locationRequest = LocationRequest()
-        
+
+        // Change Location request interval from 1000 to 3000 for better performance
         locationRequest.interval = 3000
 
         locationRequest.fastestInterval = 500
