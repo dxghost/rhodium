@@ -86,6 +86,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var lastLocation: Location
     private var circleColor = 0
+
+
     private var downloadRate = 0
     private var uploadRate = 0
 
@@ -137,13 +139,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         createLocationRequest()
-
-        mainHandler.post(object : Runnable {
-            override fun run() {
-//                measureSignalStrength()
-                mainHandler.postDelayed(this, 2000)
-            }
-        })
+        
     }
 
 
