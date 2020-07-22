@@ -90,7 +90,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private var downloadRate = 0
     private var uploadRate = 0
-    
+    private var jitter = 0
+    private var ping = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -232,13 +233,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun storeDataInDb(location: Location): Boolean {
 
+        // Set download rate and upload rate to corresponding textView
         findViewById<TextView>(R.id.downloadId).text = downloadRate.toString() + " KB/sec"
         findViewById<TextView>(R.id.uploadId).text = uploadRate.toString() + " KB/sec"
 
+        findViewById<TextView>(R.id.jitterId).text = ping.toString()
+        findViewById<TextView>(R.id.pingId).text = jitter.toString()
+
+        // Start new Thread to measure download rate and upload rate
+        // upload rate function invocation is inside `measureDownloadRate()`
         Thread(Runnable {
             measureDownloadRate()
         }).start()
 
+        // Start new thread to calculate ping
         Thread(Runnable {
             pingToSite()
         }).start()
@@ -274,7 +282,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun createLocationRequest() {
 
         locationRequest = LocationRequest()
-
+        
         locationRequest.interval = 3000
 
         locationRequest.fastestInterval = 500
