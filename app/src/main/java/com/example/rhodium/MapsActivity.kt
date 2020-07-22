@@ -90,10 +90,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private var downloadRate = 0
     private var uploadRate = 0
-
-
-    val mainHandler = Handler(Looper.getMainLooper())
-
+    
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -139,7 +136,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         createLocationRequest()
-        
+
     }
 
 
