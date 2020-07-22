@@ -60,6 +60,7 @@ class Permissions : AppCompatActivity() {
             }
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_permissions2)
@@ -77,6 +78,17 @@ class Permissions : AppCompatActivity() {
         ) {
             CallAccessBtn.setBackgroundColor(0)
         }
+
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            PHONE_CODE
+        )
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+            PHONE_CODE
+        )
 
         MapAccessBtn.setOnClickListener {
             if (ActivityCompat.checkSelfPermission(
@@ -110,6 +122,6 @@ class Permissions : AppCompatActivity() {
         }
 
 
-        }
+    }
 
 }

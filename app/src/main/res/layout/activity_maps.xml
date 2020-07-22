@@ -6,4 +6,121 @@
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MapsActivity" />
+    tools:context=".MapsActivity">
+
+    <LinearLayout
+        style="@style/Widget.AppCompat.Light.PopupMenu.Overflow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="#D7FFFFFF"
+        android:orientation="vertical"
+        android:theme="@style/Animation.AppCompat.DropDownUp">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/pingLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ping : " />
+
+                <TextView
+                    android:id="@+id/pingId"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <TextView
+                    android:id="@+id/jitterLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Jitter : " />
+
+                <TextView
+                    android:id="@+id/jitterId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimaryDark" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/downloadLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Download : " />
+
+                <TextView
+                    android:id="@+id/downloadId"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <TextView
+                    android:id="@+id/uploadLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Upload : " />
+
+                <TextView
+                    android:id="@+id/uploadId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimaryDark" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/loadHtmlLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CINR :" />
+
+                <TextView
+                    android:id="@+id/loadHtmlId"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <TextView
+                    android:id="@+id/rxLevLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="RxLev : " />
+
+                <TextView
+                    android:id="@+id/rxLev"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimaryDark" />
+            </TableRow>
+
+        </TableLayout>
+
+    </LinearLayout>
+
+</fragment>
