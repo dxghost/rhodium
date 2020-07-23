@@ -25,7 +25,12 @@ class DatabaseHandler(context: Context) :
                     KEY_MILESTONE_TAC + " TEXT," +
                     KEY_MILESTONE_PLMN + " TEXT," +
                     KEY_MILESTONE_COLOR + " TEXT," +
-                    KEY_MILESTONE_CELL_ID + " Text" + ");"
+                    KEY_MILESTONE_CELL_ID + " Text," +
+                    KEY_MILESTONE_DLR + " Text," +
+                    KEY_MILESTONE_ULR + " Text," +
+                    KEY_MILESTONE_PING + " Text," +
+                    KEY_MILESTONE_JTTR + " Text" +
+                    ");"
 
         db?.execSQL(CREATE_MILESTONE_TABLE)
 
@@ -53,6 +58,11 @@ class DatabaseHandler(context: Context) :
         values.put(KEY_MILESTONE_PLMN, milestone.plmn)
         values.put(KEY_MILESTONE_CELL_ID, milestone.cellID)
         values.put(KEY_MILESTONE_COLOR, milestone.color)
+        values.put(KEY_MILESTONE_DLR,milestone.downloadRate)
+        values.put(KEY_MILESTONE_ULR,milestone.uploadRate)
+        values.put(KEY_MILESTONE_PING,milestone.ping)
+        values.put(KEY_MILESTONE_JTTR,milestone.jitter)
+
 
         var insert = db.insert(TABLE_NAME, null, values)
 
@@ -132,7 +142,11 @@ class DatabaseHandler(context: Context) :
                 KEY_MILESTONE_TAC,
                 KEY_MILESTONE_PLMN,
                 KEY_MILESTONE_COLOR,
-                KEY_MILESTONE_CELL_ID
+                KEY_MILESTONE_CELL_ID,
+                KEY_MILESTONE_DLR,
+                KEY_MILESTONE_ULR,
+                KEY_MILESTONE_PING,
+                KEY_MILESTONE_JTTR
             ), KEY_MILESTONE_LOCATION + "=?", arrayOf(location),
             null, null, null, null
         )
@@ -166,6 +180,10 @@ class DatabaseHandler(context: Context) :
         milestone.plmn = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_PLMN))
         milestone.cellID = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_CELL_ID))
         milestone.color = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_COLOR))
+        milestone.downloadRate = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_DLR))
+        milestone.uploadRate = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_ULR))
+        milestone.ping = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_PING))
+        milestone.jitter = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_JTTR))
 
         return milestone
     }
@@ -206,6 +224,10 @@ class DatabaseHandler(context: Context) :
                 milestone.plmn = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_PLMN))
                 milestone.cellID = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_CELL_ID))
                 milestone.color = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_COLOR))
+                milestone.downloadRate = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_DLR))
+                milestone.uploadRate = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_ULR))
+                milestone.ping = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_PING))
+                milestone.jitter = cursor.getString(cursor.getColumnIndex(KEY_MILESTONE_JTTR))
 
                 list.add(milestone)
 

@@ -1,7 +1,7 @@
 package com.example.rhodium
 
 
-//TODO add CINR
+
 class Milestone() {
     var location: String? = null
     var technology: String? = null
@@ -19,6 +19,10 @@ class Milestone() {
     var plmn: String? = null
     var cellID: String? = null
     var color: String? = null
+    var downloadRate: String? = null
+    var uploadRate: String? = null
+    var ping: String? = null
+    var jitter: String? = null
     var id: Int? = null
 
 

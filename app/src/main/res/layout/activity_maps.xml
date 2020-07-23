@@ -95,13 +95,13 @@
                 android:padding="10dp">
 
                 <TextView
-                    android:id="@+id/loadHtmlLabel"
+                    android:id="@+id/cinrLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="CINR :" />
 
                 <TextView
-                    android:id="@+id/loadHtmlId"
+                    android:id="@+id/cinrId"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorPrimaryDark" />

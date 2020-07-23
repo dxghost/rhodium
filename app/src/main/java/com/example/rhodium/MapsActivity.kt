@@ -47,6 +47,7 @@ import java.net.InetAddress
 import java.net.URL
 import java.util.*
 import kotlin.collections.HashMap
+import kotlin.math.abs
 import kotlin.math.roundToInt
 import kotlin.text.Typography.tm
 
@@ -92,6 +93,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private var uploadRate = 0
     private var jitter = 0
     private var ping = 0
+    private var rxLev = 0
+    private var cinr = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -237,20 +240,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         findViewById<TextView>(R.id.downloadId).text = downloadRate.toString() + " KB/sec"
         findViewById<TextView>(R.id.uploadId).text = uploadRate.toString() + " KB/sec"
 
-        findViewById<TextView>(R.id.jitterId).text = ping.toString()
-        findViewById<TextView>(R.id.pingId).text = jitter.toString()
+        findViewById<TextView>(R.id.jitterId).text = jitter.toString() + " ms"
+        findViewById<TextView>(R.id.pingId).text = ping.toString() + " ms"
+
+        findViewById<TextView>(R.id.rxLev).text = rxLev.toString()
+        findViewById<TextView>(R.id.cinrId).text = cinr.toString()
 
         // Start new Thread to measure download rate and upload rate
         // upload rate function invocation is inside `measureDownloadRate()`
         Thread(Runnable {
-            measureDownloadRate()
+            measureNetworkQuality()
         }).start()
-
-        // Start new thread to calculate ping
-        Thread(Runnable {
-            pingToSite()
-        }).start()
-
 
         var f = initMilestone()
         var currentLatLng = LatLng(location.latitude, location.longitude)
@@ -284,9 +284,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         locationRequest = LocationRequest()
 
         // Change Location request interval from 1000 to 3000 for better performance
-        locationRequest.interval = 3000
+        locationRequest.interval = 5000
 
-        locationRequest.fastestInterval = 500
+        locationRequest.fastestInterval = 5000
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
         val builder = LocationSettingsRequest.Builder()
@@ -314,34 +314,32 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun pingToSite() {
-        // @todo
-        // this code does not work !
-        var first = TrafficStats.getTotalRxPackets()
-
+    private fun pingToSite(): Int {
         val begin = Date().time
-
         var testUrl =
             "http://downloadly.ir/"
-
         var res = URL(testUrl)
-
         var urlConnection = res.openConnection()
         urlConnection.connect()
-
-
-        var data = res.readBytes()
-
         val end = Date().time
-        var difference = (end - begin).toFloat().div(1000)
+        var delta = end - begin
+        ping = delta.toInt()
+        return ping
+    }
 
 
-        var sec = TrafficStats.getTotalRxPackets()
-        var delta = sec - first
-        println("Number of packet : " + delta)
-        println("Average Download Speed is : " + delta.div(difference).toInt())
-
-
+    private fun measureNetworkQuality(){
+        measureDownloadRate()
+        var p1 = pingToSite()
+        var i =0
+        var totalDiff = 0
+        while (i<5){
+            var p2 = pingToSite()
+            totalDiff += abs(p2-p1)
+            p1=p2
+            i++
+        }
+        jitter = totalDiff/5
     }
 
     private fun measureUploadRate(file: File) {
@@ -385,7 +383,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val begin = Date().time
 
         var testUrl =
-            "https://dl2.soft98.ir/ebook/tondamooze.shabakeh.ebook.rar?1595310728"
+            "http://at1.cdn.asandl.com/graphic/font/arabic/Ara.Alm.Bon.otf_www.AsanDownload.com.zip"
 
         var res = URL(testUrl)
 
@@ -411,65 +409,70 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun initMilestone(): Milestone {
         dbHandler = DatabaseHandler(this)
 
-//        val tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-//        var netWorkType = techTypes[tm.networkType]
-//
-//
-//        var allCellInfo = tm.allCellInfo
-//        var currentCell = allCellInfo.get(0)
-//        when (netWorkType) {
-//            "NETWORK_TYPE_EDGE" -> {
-//                for (cellInfo in allCellInfo) {
-//                    if (cellInfo is CellInfoGsm) {
-//                        currentCell = cellInfo
-//                    }
-//                }
-//            }
-//            "NETWORK_TYPE_GPRS" -> {
-//                for (cellInfo in allCellInfo) {
-//                    if (cellInfo is CellInfoGsm)
-//                        currentCell = cellInfo
-//                }
-//            }
-//            "NETWORK_TYPE_HSPA" -> {
-//                for (cellInfo in allCellInfo) {
-//                    if (cellInfo is CellInfoWcdma)
-//                        currentCell = cellInfo
-//                }
-//            }
-//            "NETWORK_TYPE_UMTS" -> {
-//                for (cellInfo in allCellInfo) {
-//                    if (cellInfo is CellInfoWcdma)
-//                        currentCell = cellInfo
-//                }
-//            }
-//            "NETWORK_TYPE_LTE" -> {
-//                for (cellInfo in allCellInfo) {
-//                    if (cellInfo is CellInfoLte)
-//                        currentCell = cellInfo
-//                }
-//            }
-//            else ->
-//                currentCell = allCellInfo[0]
-//        }
-//
-//
-        var f = Milestone()
-//        var json = getCellInfo(currentCell)
-        f.technology = "type"
-        f.lac = "LAC"
-        f.rxLev = "RxLev"
-        f.tac = "TAC"
-        f.cinr = "CINR"
-        f.plmn = "12"
-        f.c1 = "C1"
-        f.c2 = "C2"
-        f.rsrp = "RSRP"
-        f.rsrq = "RSRQ"
-        f.rscp = "RSCP"
-        f.cellID = "cell_identity"
-        f.signalStrength = "3"
+        val tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        var netWorkType = techTypes[tm.networkType]
 
+
+        var allCellInfo = tm.allCellInfo
+        var currentCell = allCellInfo.get(0)
+        when (netWorkType) {
+            "NETWORK_TYPE_EDGE" -> {
+                for (cellInfo in allCellInfo) {
+                    if (cellInfo is CellInfoGsm) {
+                        currentCell = cellInfo
+                    }
+                }
+            }
+            "NETWORK_TYPE_GPRS" -> {
+                for (cellInfo in allCellInfo) {
+                    if (cellInfo is CellInfoGsm)
+                        currentCell = cellInfo
+                }
+            }
+            "NETWORK_TYPE_HSPA" -> {
+                for (cellInfo in allCellInfo) {
+                    if (cellInfo is CellInfoWcdma)
+                        currentCell = cellInfo
+                }
+            }
+            "NETWORK_TYPE_UMTS" -> {
+                for (cellInfo in allCellInfo) {
+                    if (cellInfo is CellInfoWcdma)
+                        currentCell = cellInfo
+                }
+            }
+            "NETWORK_TYPE_LTE" -> {
+                for (cellInfo in allCellInfo) {
+                    if (cellInfo is CellInfoLte)
+                        currentCell = cellInfo
+                }
+            }
+            else ->
+                currentCell = allCellInfo[0]
+        }
+
+
+        var f = Milestone()
+        var json = getCellInfo(currentCell)
+        f.technology = json["type"]
+        f.lac = json["LAC"]
+        f.rxLev = json["RxLev"]
+        f.tac = json["TAC"]
+        f.cinr = json["CINR"]
+        f.plmn = tm.networkOperator
+        f.c1 = json["C1"]
+        f.c2 = json["C2"]
+        f.rsrp = json["RSRP"]
+        f.rsrq = json["RSRQ"]
+        f.rscp = json["RSCP"]
+        f.cellID = json["cell_identity"]
+        f.signalStrength = json["signal_strength"]
+        f.uploadRate = uploadRate.toString()
+        f.downloadRate = downloadRate.toString()
+        f.ping = ping.toString()
+        f.jitter = jitter.toString()
+        cinr = f.cinr?.toInt() ?: 0
+        rxLev = f.rxLev?.toInt() ?: 0
         return f
     }
 
@@ -527,6 +530,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mDialogView.rsrq.setText(cellInfo.rsrq)
         mDialogView.cellId.setText(cellInfo.cellID)
         mDialogView.signalStrength.setText(cellInfo.signalStrength)
+        mDialogView.dlRate.setText(cellInfo.downloadRate + " KB/sec")
+        mDialogView.ulRate.setText(cellInfo.uploadRate + " KB/sec")
+        mDialogView.ping.setText(cellInfo.ping + " ms")
+        mDialogView.jitter.setText(cellInfo.jitter + " ms")
 
         mDialogView.close_btn.setOnClickListener {
             mAlertDialog.dismiss()

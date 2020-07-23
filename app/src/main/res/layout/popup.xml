@@ -193,6 +193,7 @@
                 android:textColor="@color/colorPrimaryDark" />
 
         </TableRow>
+
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -223,14 +224,74 @@
                 android:textColor="@color/colorPrimaryDark" />
 
         </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/pingLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ping: " />
+
+            <TextView
+                android:id="@+id/ping"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryDark" />
+
+            <TextView
+                android:id="@+id/jitterLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Jitter : " />
+
+            <TextView
+                android:id="@+id/jitter"
+                android:layout_width="309dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryDark" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/dlRateLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Download:" />
+
+            <TextView
+                android:id="@+id/dlRate"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryDark" />
+
+            <TextView
+                android:id="@+id/ulRateLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Upload:" />
+
+            <TextView
+                android:id="@+id/ulRate"
+                android:layout_width="309dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryDark" />
+
+        </TableRow>
     </TableLayout>
 
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp">
-
-    </TableRow>
+        android:padding="10dp"/>
 
     <Button
         android:id="@+id/close_btn"
