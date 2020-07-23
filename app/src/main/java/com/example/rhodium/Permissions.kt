@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.activity_permissions2.*
 
 val GPS_CODE = 1
 val PHONE_CODE = 2
+val WRITE_CODE = 5
 
 class Permissions : AppCompatActivity() {
     override fun onRequestPermissionsResult(
@@ -26,6 +27,10 @@ class Permissions : AppCompatActivity() {
                     Toast.makeText(this, "PHONE_ACCESS_GRANTED", Toast.LENGTH_LONG).show()
                     CallAccessBtn.setBackgroundColor(0)
                     if (ActivityCompat.checkSelfPermission(
+                            this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        ) == PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(
                             this,
                             Manifest.permission.ACCESS_FINE_LOCATION
                         ) == PackageManager.PERMISSION_GRANTED
@@ -45,6 +50,10 @@ class Permissions : AppCompatActivity() {
                     MapAccessBtn.setBackgroundColor(0)
                     if (ActivityCompat.checkSelfPermission(
                             this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        ) == PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(
+                            this,
                             Manifest.permission.READ_PHONE_STATE
                         ) == PackageManager.PERMISSION_GRANTED
                     ) {
@@ -52,6 +61,28 @@ class Permissions : AppCompatActivity() {
                     }
                 } else {
                     Toast.makeText(this, "GPS_ACCESS_DENIED", Toast.LENGTH_LONG).show()
+                }
+                return
+            }
+            WRITE_CODE -> {
+                if ((grantResults.isNotEmpty() &&
+                            grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                ) {
+                    Toast.makeText(this, "INTERNET_ACCESS_GRANTED", Toast.LENGTH_LONG).show()
+                    MapAccessBtn.setBackgroundColor(0)
+                    if (ActivityCompat.checkSelfPermission(
+                            this,
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                        ) == PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(
+                            this,
+                            Manifest.permission.READ_PHONE_STATE
+                        ) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        startActivity(Intent(this, MapsActivity::class.java))
+                    }
+                } else {
+                    Toast.makeText(this, "INTERNET_ACCESS_DENIED", Toast.LENGTH_LONG).show()
                 }
                 return
             }
@@ -64,6 +95,7 @@ class Permissions : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_permissions2)
+
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_COARSE_LOCATION
@@ -78,17 +110,14 @@ class Permissions : AppCompatActivity() {
         ) {
             CallAccessBtn.setBackgroundColor(0)
         }
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            StorageAccessBtn.setBackgroundColor(0)
+        }
 
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-            PHONE_CODE
-        )
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-            PHONE_CODE
-        )
 
         MapAccessBtn.setOnClickListener {
             if (ActivityCompat.checkSelfPermission(
@@ -120,7 +149,21 @@ class Permissions : AppCompatActivity() {
                 Toast.makeText(this, "CALL_ACCESS_ALREADY_ACQUIRED", Toast.LENGTH_SHORT).show()
             }
         }
-
+        StorageAccessBtn.setOnClickListener {
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    WRITE_CODE
+                )
+            } else {
+                Toast.makeText(this, "CALL_ACCESS_ALREADY_ACQUIRED", Toast.LENGTH_SHORT).show()
+            }
+        }
 
     }
 

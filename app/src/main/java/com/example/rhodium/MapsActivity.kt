@@ -99,18 +99,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
-
         if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.READ_PHONE_STATE
             ) != PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(
                 this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.INTERNET
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             startActivity(Intent(this, Permissions::class.java))
@@ -328,18 +327,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
-    private fun measureNetworkQuality(){
+    private fun measureNetworkQuality() {
         measureDownloadRate()
         var p1 = pingToSite()
-        var i =0
+        var i = 0
         var totalDiff = 0
-        while (i<5){
+        while (i < 5) {
             var p2 = pingToSite()
-            totalDiff += abs(p2-p1)
-            p1=p2
+            totalDiff += abs(p2 - p1)
+            p1 = p2
             i++
         }
-        jitter = totalDiff/5
+        jitter = totalDiff / 5
     }
 
     private fun measureUploadRate(file: File) {
