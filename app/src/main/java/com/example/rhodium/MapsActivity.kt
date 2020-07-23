@@ -241,9 +241,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         findViewById<TextView>(R.id.jitterId).text = jitter.toString() + " ms"
         findViewById<TextView>(R.id.pingId).text = ping.toString() + " ms"
-
-        findViewById<TextView>(R.id.rxLev).text = rxLev.toString()
-        findViewById<TextView>(R.id.cinrId).text = cinr.toString()
+        
 
         // Start new Thread to measure download rate and upload rate
         // upload rate function invocation is inside `measureDownloadRate()`

@@ -89,36 +89,6 @@
                     android:textColor="@color/colorPrimaryDark" />
             </TableRow>
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/cinrLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="CINR :" />
-
-                <TextView
-                    android:id="@+id/cinrId"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimaryDark" />
-
-                <TextView
-                    android:id="@+id/rxLevLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="RxLev : " />
-
-                <TextView
-                    android:id="@+id/rxLev"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimaryDark" />
-            </TableRow>
-
         </TableLayout>
 
     </LinearLayout>
